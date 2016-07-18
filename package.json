@@ -4,7 +4,7 @@
   "description": "Print markdown with thermal printer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "thermal",
@@ -15,5 +15,8 @@
   "license": "MIT",
   "dependencies": {
     "markdown": "^0.5.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3"
   }
 }
