@@ -25,5 +25,31 @@ describe('src/custom_markdown.js', function() {
             assert(Array.isArray(paragraph[1][1]));
             assert(paragraph[1][1][1].trim() === 'winter');
         });
+
+        it('Should generate big whenever a header tag is given', function() {
+            var markdowns = [
+                'Hello World\n==========',
+                '# Hello World',
+                '#Hello World',
+                '## Hello World',
+                '### Hello World',
+                '#### Hello World',
+                '##### Hello World',
+                '###### Hello World',
+            ];
+
+            var tree;
+            var element;
+
+            markdowns.forEach(function(mark) {
+                tree = markdown(mark);
+                tree.shift();
+
+                element = tree[0];
+                assert(element[0] === 'para');
+                assert(element[1][0] === 'big');
+                assert(element[1][1] === 'Hello World');
+            });
+        });
     });
 });

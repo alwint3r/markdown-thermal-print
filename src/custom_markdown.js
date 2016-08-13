@@ -34,11 +34,33 @@ function headToTail(element) {
     };
 }
 
+function isHeading(element) {
+    return element[0] === 'header';
+}
+
+function heading(element) {
+    return ['para', ['big', element[2]]];
+}
+
 function isNeedAlignCenter(element) {
+    if (element[0] !== 'para') {
+        return false;
+    }
+
     var headTail = headToTail(element);
     var isSeparatedToken = headTail.head === '->' && headTail.tail === '<-';
-    var isInPlain = element[1].indexOf('->') === 0
-        && element[1].indexOf('<-') === element[1].length - 2;
+    var isInPlain;
+
+    if (typeof element[1] === 'string') {
+        isInPlain = (element[1].indexOf('->') === 0
+            && element[1].indexOf('<-') === element[1].length - 2);
+
+        if (typeof element[headTail.length - 1] === 'string') {
+            isInPlain = isInPlain || (element[headTail.length - 1].indexOf('<-') >= 0);
+        }
+    } else {
+        isInPlain = false;
+    }
 
     return isSeparatedToken || isInPlain;
 }
@@ -53,6 +75,10 @@ function reprocessTree(tree) {
 
         if (isNeedAlignCenter(element)) {
             tree[i] = alignCenter(element);
+        }
+
+        if (isHeading(element)) {
+            tree[i] = heading(element);
         }
     }
 
