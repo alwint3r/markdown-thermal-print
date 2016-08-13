@@ -1,9 +1,9 @@
 'use strict';
 
 var assert = require('assert');
-var markdown = require('../lib/custom_markdown');
+var markdown = require('../src/custom_markdown');
 
-describe('lib/custom_markdown.js', function() {
+describe('src/custom_markdown.js', function() {
     this.timeout(3000);
 
     describe('toTree(rawMarkdown)', function() {
