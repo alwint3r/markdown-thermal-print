@@ -51,5 +51,27 @@ describe('src/custom_markdown.js', function() {
                 assert(element[1][1] === 'Hello World');
             });
         });
+
+        it('Should replace link by the original text', function() {
+            var links = [
+                '(a link)[https://google.com]',
+                'Hello, this is (a link)[https://google.com] link yes.',
+            ];
+
+            var tree;
+            var element;
+
+            tree = markdown(links[0]);
+            tree.shift();
+
+            element = tree[0];
+            assert.equal(element[1], 'https://google.com');
+
+            tree = markdown(links[1]);
+            tree.shift();
+
+            element = tree[0];
+            assert.equal(element[1], 'Hello, this is https://google.com');
+        });
     });
 });

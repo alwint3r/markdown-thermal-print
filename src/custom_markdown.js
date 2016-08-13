@@ -65,6 +65,70 @@ function isNeedAlignCenter(element) {
     return isSeparatedToken || isInPlain;
 }
 
+function isLink(element) {
+    if (findLink(element)) {
+        return true;
+    }
+
+    return false;
+}
+
+function findLink(element) {
+    for (var i = 0; i < element.length; i++) {
+        if (Array.isArray(element[i])) {
+            if (element[i][0] === 'link' || element[i][0] === 'link_ref') {
+                return [element[i], i];
+            }
+        }
+    }
+
+    return false;
+}
+
+function link(element) {
+    var findResult = findLink(element);
+    var linkNode = findResult[0];
+    var linkIndex = findResult[1];
+    var replacement;
+    var replaceIndex = linkIndex;
+
+    if (linkNode[0] === 'link_ref') {
+        replaceIndex -= 1;
+        replacement = element[linkIndex - 1].replace(/\(.*\)/g, linkNode[1].ref);
+    } else {
+        replacement = linkNode[1].href;
+    }
+
+    var duplicate = element.concat([]);
+    duplicate[replaceIndex] = replacement;
+
+    var result = [];
+
+    for (var i = 0; i < duplicate.length; i++) {
+        if (Array.isArray(duplicate[i])) {
+            if (duplicate[i][0] === 'link' || duplicate[i][0] === 'link_ref') {
+                continue;
+            }
+        }
+
+        result.push(duplicate[i]);
+    }
+
+    return result;
+}
+
+function deepTextSearch(element) {
+    if (typeof element === 'string' || !Array.isArray(element)) {
+        return element;
+    }
+
+    if (typeof element[1] === 'object' && !Array.isArray(element[1])) {
+        return deepTextSearch(element[2]);
+    }
+
+    return deepTextSearch(element[1]);
+}
+
 function reprocessTree(tree) {
     var element;
     var length;
@@ -79,6 +143,10 @@ function reprocessTree(tree) {
 
         if (isHeading(element)) {
             tree[i] = heading(element);
+        }
+
+        if (isLink(element)) {
+            tree[i] = link(element);
         }
     }
 
