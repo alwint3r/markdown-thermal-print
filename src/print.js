@@ -5,18 +5,18 @@ var md = require('./custom_markdown');
 function nop() {}
 
 function print(thermalPrinter, rawMd, done) {
-    if (typeof thermalPrinter.printer !== 'function') {
-        return done(new Error('First argument must be a valid printer'));
-    }
-
-    if (typeof rawMd !== 'string') {
-        return done(new Error('Second argument must be a markdown string'));
-    }
-
     var callback = done;
 
     if (typeof done !== 'function') {
         callback = nop;
+    }
+
+    if (typeof thermalPrinter.print !== 'function') {
+        return callback(new Error('First argument must be a valid printer'));
+    }
+
+    if (typeof rawMd !== 'string') {
+        return callback(new Error('Second argument must be a markdown string'));
     }
 
     var tree = md(rawMd);
@@ -27,11 +27,7 @@ function print(thermalPrinter, rawMd, done) {
         tree.shift();
     }
 
-    console.log(tree);
-
-    while (tree[i]) {
-        i += 1;
-        // do actual printing
+    for (var i = 0; i < tree.length; i++) {
         console.log(tree[i]);
     }
 
