@@ -107,5 +107,28 @@ describe('src/custom_markdown.js', function() {
             assert.equal(element[1][1][1], 'Bold Text');
             assert.equal(element[1][2], ' aligned left');
         });
+
+        it('Should align right correctly', function() {
+            var mark = 'right aligned <-';
+            var tree = markdown(mark);
+
+            tree.shift();
+            var element = tree[0];
+
+            assert.equal(typeof element[1], 'object');
+            assert.equal(element[1][0], 'right');
+            assert.equal(element[1][1], 'right aligned');
+
+            mark = '_Italic Text_ aligned right <-';
+            tree = markdown(mark);
+
+            tree.shift();
+            element = tree[0];
+
+            assert.equal(typeof element[1], 'object');
+            assert.equal(element[1][1][0], 'em');
+            assert.equal(element[1][1][1], 'Italic Text');
+            assert.equal(element[1][2], ' aligned right');
+        });
     });
 });

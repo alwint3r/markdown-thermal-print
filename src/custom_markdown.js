@@ -69,6 +69,37 @@ function alignLeft(element) {
     return newElement;
 }
 
+function alignRight(element) {
+    var length = element.length;
+
+    if (element[0] !== 'para') {
+        return element;
+    }
+
+    var newElement = ['para', ['right']];
+    if (length === 2) {
+        var sliced = element[1].slice(0, element[1].length - 2);
+        newElement[1].push(utils.trim(sliced));
+
+        return newElement;
+    }
+
+    for (var i = 1; i < length; i++) {
+        if (element[i].indexOf('<-') === element[i].length - 2) {
+            var replaceTag = element[i][element[i].indexOf('<-') - 1] === ' ' ? ' <-' : '<-';
+            newElement[1].push(element[i].replace(replaceTag, ''));
+        } else {
+            newElement[1].push(element[i]);
+        }
+    }
+
+    newElement[1] = newElement[1].filter(function(item) {
+        return item !== '';
+    });
+
+    return newElement;
+}
+
 function isHeading(element) {
     return element[0] === 'header';
 }
@@ -275,7 +306,7 @@ function reprocessTree(tree) {
         }
 
         if (isAlignRight(tree[i])) {
-            console.log('RIGHT ALIGN: ', tree[i]);
+            tree[i] = alignRight(tree[i]);
         }
 
         if (isHeading(tree[i])) {
