@@ -56,7 +56,8 @@ function isNeedAlignCenter(element) {
             && element[1].indexOf('<-') === element[1].length - 2);
 
         if (typeof element[headTail.length - 1] === 'string') {
-            isInPlain = isInPlain || (utils.trim(element[headTail.length - 1]).indexOf('<-') === 0);
+            isInPlain = isInPlain ||
+                (utils.trim(element[headTail.length - 1]).indexOf('<-') === (headTail.length - 2));
         }
     } else {
         isInPlain = false;
@@ -94,7 +95,7 @@ function link(element) {
 
     if (linkNode[0] === 'link_ref') {
         replaceIndex -= 1;
-        replacement = element[linkIndex - 1].replace(/\(.*\)/g, linkNode[1].ref);
+        replacement = element[replaceIndex].replace(/\(.*\)/g, linkNode[1].ref);
     } else {
         replacement = linkNode[1].href;
     }

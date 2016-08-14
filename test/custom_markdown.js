@@ -52,7 +52,7 @@ describe('src/custom_markdown.js', function() {
             });
         });
 
-        it('Should replace link by the original text', function() {
+        it('Should replace link text by the actual url', function() {
             var links = [
                 '(a link)[https://google.com]',
                 'Hello, this is (a link)[https://google.com] link yes.',
