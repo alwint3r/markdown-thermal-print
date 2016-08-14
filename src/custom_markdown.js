@@ -56,7 +56,7 @@ function isNeedAlignCenter(element) {
             && element[1].indexOf('<-') === element[1].length - 2);
 
         if (typeof element[headTail.length - 1] === 'string') {
-            isInPlain = isInPlain || (element[headTail.length - 1].indexOf('<-') >= 0);
+            isInPlain = isInPlain || (utils.trim(element[headTail.length - 1]).indexOf('<-') === 0);
         }
     } else {
         isInPlain = false;
