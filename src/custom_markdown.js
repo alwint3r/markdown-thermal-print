@@ -38,6 +38,37 @@ function alignCenter(element) {
     return newElement;
 }
 
+function alignLeft(element) {
+    var length = element.length;
+
+    if (element[0] !== 'para') {
+        return element;
+    }
+
+    var newElement = ['para', ['left']];
+    if (length === 2) {
+        var sliced = element[1].slice(2, element[1].length);
+        newElement[1].push(sliced);
+
+        return newElement;
+    }
+
+    for (var i = 1; i < length; i++) {
+        if (utils.trim(element[i]).indexOf('->') === 0) {
+            var replaceTag = element[i][element[i].indexOf('->') + 2] === ' ' ? '-> ' : '->';
+            newElement[1].push(element[i].replace(replaceTag, ''));
+        } else {
+            newElement[1].push(element[i]);
+        }
+    }
+
+    newElement[1] = newElement[1].filter(function(item) {
+        return item !== '';
+    });
+
+    return newElement;
+}
+
 function isHeading(element) {
     return element[0] === 'header';
 }
@@ -181,6 +212,52 @@ function findDeepLink(element) {
     return duplicate;
 }
 
+function isAlignRight(element) {
+    if (element[0] !== 'para') {
+        return false;
+    }
+
+    var length = element.length;
+
+    if (length === 2 && utils.isString(element[1])) {
+        var trimmed = utils.trim(element[1]);
+
+        return trimmed.indexOf('->') < 0
+            && trimmed.indexOf('<-') === trimmed.length - 2;
+    }
+
+    if (length > 2 && utils.isString(element[length - 1])) {
+
+        return utils.trim(element[1]).indexOf('->') < 0
+            && utils.trim(element[length - 1]).indexOf('<-') === (utils.trim(element[length - 1]).length - 2);
+    }
+
+    return false;
+}
+
+function isAlignLeft(element) {
+    if (element[0] !== 'para') {
+        return false;
+    }
+
+    var length = element.length;
+
+    if (length === 2 && utils.isString(element[1])) {
+        var trimmed = utils.trim(element[1]);
+
+        return trimmed.indexOf('->') === 0
+            && trimmed.indexOf('<-') < 0;
+    }
+
+    if (length > 2 && utils.isString(element[1])) {
+
+        return utils.trim(element[1]).indexOf('->') === 0
+            && utils.trim(element[length - 1]).indexOf('<-') < 0;
+    }
+
+    return false;
+}
+
 function reprocessTree(tree) {
     var element;
     var length;
@@ -191,6 +268,14 @@ function reprocessTree(tree) {
 
         if (isNeedAlignCenter(tree[i])) {
             tree[i] = alignCenter(tree[i]);
+        }
+
+        if (isAlignLeft(tree[i])) {
+            tree[i] = alignLeft(tree[i]);
+        }
+
+        if (isAlignRight(tree[i])) {
+            console.log('RIGHT ALIGN: ', tree[i]);
         }
 
         if (isHeading(tree[i])) {

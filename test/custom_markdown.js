@@ -85,5 +85,27 @@ describe('src/custom_markdown.js', function() {
             assert.equal(element[1][0], 'center');
             assert.equal(element[1][1], 'centered https://google.com');
         });
+
+        it('Should align left correctly', function() {
+            var mark = '-> left aligned';
+            var tree = markdown(mark);
+
+            tree.shift();
+            var element = tree[0];
+
+            assert.equal(element[1][0], 'left');
+            assert.equal(element[1][1], ' left aligned');
+
+            mark = '-> **Bold Text** aligned left';
+            tree = markdown(mark);
+
+            tree.shift();
+            element = tree[0];
+
+            assert.equal(element[1][0], 'left');
+            assert.equal(typeof element[1][1], 'object');
+            assert.equal(element[1][1][1], 'Bold Text');
+            assert.equal(element[1][2], ' aligned left');
+        });
     });
 });
