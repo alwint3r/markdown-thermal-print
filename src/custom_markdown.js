@@ -17,10 +17,14 @@ function alignCenter(element) {
         return newElement;
     }
 
-    for (var i = 2; i < length; i++) {
+    for (var i = 1; i < length; i++) {
         if (utils.trim(element[i]) === '<-')
             break;
-        newElement[1].push(element[i]);
+        if (utils.trim(element[i]).indexOf('->') === 0) {
+            newElement[1].push(element[i].replace('->', ''));
+        } else {
+            newElement[1].push(element[i]);
+        }
     }
 
     return newElement;
