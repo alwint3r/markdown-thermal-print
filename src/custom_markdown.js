@@ -21,11 +21,16 @@ function alignCenter(element) {
         if (utils.trim(element[i]) === '<-')
             break;
         if (utils.trim(element[i]).indexOf('->') === 0) {
-            newElement[1].push(element[i].replace('->', ''));
+            var replaceTag = element[i][element[i].indexOf('->') + 2] === ' ' ? '-> ' : '->';
+            newElement[1].push(element[i].replace(replaceTag, ''));
         } else {
             newElement[1].push(element[i]);
         }
     }
+
+    newElement[1] = newElement[1].filter(function(item) {
+        return item !== '';
+    });
 
     return newElement;
 }
@@ -62,15 +67,7 @@ function isNeedAlignCenter(element) {
     return false;
 }
 
-function isLink(element) {
-    if (findLink(element)) {
-        return true;
-    }
-
-    return false;
-}
-
-function findLink(element) {
+function shalloWLink(element) {
     for (var i = 0; i < element.length; i++) {
         if (Array.isArray(element[i])) {
             if (element[i][0] === 'link' || element[i][0] === 'link_ref') {
@@ -83,7 +80,7 @@ function findLink(element) {
 }
 
 function link(element) {
-    var findResult = findLink(element);
+    var findResult = shalloWLink(element);
     var linkNode = findResult[0];
     var linkIndex = findResult[1];
     var replacement;
@@ -142,7 +139,7 @@ function reprocessTree(tree) {
             tree[i] = heading(tree[i]);
         }
 
-        if (isLink(tree[i])) {
+        if (shalloWLink(tree[i])) {
             tree[i] = link(tree[i]);
         }
     }

@@ -21,9 +21,9 @@ describe('src/custom_markdown.js', function() {
             tree.shift();
 
             var paragraph = tree[0];
-            assert(paragraph[1][0] === 'center');
+            assert.equal(paragraph[1][0], 'center');
             assert(Array.isArray(paragraph[1][1]));
-            assert(paragraph[1][1][1].trim() === 'winter');
+            assert.equal(paragraph[1][1][1].trim(), 'winter');
         });
 
         it('Should generate big whenever a header tag is given', function() {
@@ -72,6 +72,17 @@ describe('src/custom_markdown.js', function() {
 
             element = tree[0];
             assert.equal(element[1], 'Hello, this is https://google.com');
+        });
+
+        it('Centered link should be centered and parsed as link', function() {
+            var mark = '-> centered (link)[https://google.com] <-';
+            var tree = markdown(mark);
+
+            tree.shift();
+            var element = tree[0];
+
+            assert.equal(element[1][0], 'center');
+            assert.equal(element[1][1], 'centered https://google.com');
         });
     });
 });
