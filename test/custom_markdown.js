@@ -17,13 +17,14 @@ describe('src/custom_markdown.js', function() {
         });
 
         it('Should generate center when a text is enclosed by -> <- and nested with another tag', function() {
-            var tree = markdown('-> **winter** <-');
+            var tree = markdown('-> **winter** yeah <-');
             tree.shift();
 
             var paragraph = tree[0];
             assert.equal(paragraph[1][0], 'center');
             assert(Array.isArray(paragraph[1][1]));
             assert.equal(paragraph[1][1][1].trim(), 'winter');
+            assert.equal(paragraph[1][2].trim(), 'yeah');
         });
 
         it('Should generate big whenever a header tag is given', function() {

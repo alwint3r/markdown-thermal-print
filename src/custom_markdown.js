@@ -23,6 +23,9 @@ function alignCenter(element) {
         if (utils.trim(element[i]).indexOf('->') === 0) {
             var replaceTag = element[i][element[i].indexOf('->') + 2] === ' ' ? '-> ' : '->';
             newElement[1].push(element[i].replace(replaceTag, ''));
+        } else if (element[i].indexOf('<-') === element[i].length - 2) {
+            var replaceTag = element[i][element[i].indexOf('<-') - 1] === ' ' ? ' <-' : '<-';
+            newElement[1].push(element[i].replace(replaceTag, ''));
         } else {
             newElement[1].push(element[i]);
         }
@@ -142,6 +145,8 @@ function reprocessTree(tree) {
         if (shalloWLink(tree[i])) {
             tree[i] = link(tree[i]);
         }
+
+        // tree[i] = findDeepLink(tree[i]);
     }
 
     return tree;
