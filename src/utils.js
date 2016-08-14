@@ -8,4 +8,16 @@ module.exports = {
 
         return source.trim();
     },
+
+    isString: function isString(source) {
+        return typeof source === 'string';
+    },
+
+    isArray: function isArray(source) {
+        return Array.isArray(source);
+    },
+
+    isObject: function isObject(source) {
+        return typeof source === 'object';
+    },
 };

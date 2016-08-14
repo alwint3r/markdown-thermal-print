@@ -26,14 +26,6 @@ function alignCenter(element) {
     return newElement;
 }
 
-function headToTail(element) {
-    return {
-        length: element.length,
-        head: utils.trim(element[1]),
-        tail: utils.trim(element[element.length - 1]),
-    };
-}
-
 function isHeading(element) {
     return element[0] === 'header';
 }
@@ -47,23 +39,23 @@ function isNeedAlignCenter(element) {
         return false;
     }
 
-    var headTail = headToTail(element);
-    var isSeparatedToken = headTail.head === '->' && headTail.tail === '<-';
-    var isInPlain;
+    var length = element.length;
 
-    if (typeof element[1] === 'string') {
-        isInPlain = (element[1].indexOf('->') === 0
-            && element[1].indexOf('<-') === element[1].length - 2);
+    if (length === 2 && utils.isString(element[length - 1])) {
+        var trimmed = utils.trim(element[length - 1]);
 
-        if (typeof element[headTail.length - 1] === 'string') {
-            isInPlain = isInPlain ||
-                (utils.trim(element[headTail.length - 1]).indexOf('<-') === (headTail.length - 2));
-        }
-    } else {
-        isInPlain = false;
+        return trimmed.indexOf('->') === 0
+            && trimmed.indexOf('<-') === trimmed.length - 2;
     }
 
-    return isSeparatedToken || isInPlain;
+    if (length > 2 &&
+            (utils.isString(element[1]) && utils.isString(element[length - 1]))) {
+
+        return utils.trim(element[1]).indexOf('->') === 0
+            && utils.trim(element[length - 1]).indexOf('<-') === (utils.trim(element[length - 1]).length - 2);
+    }
+
+    return false;
 }
 
 function isLink(element) {
@@ -119,11 +111,11 @@ function link(element) {
 }
 
 function deepTextSearch(element) {
-    if (typeof element === 'string' || !Array.isArray(element)) {
+    if (typeof element === 'string' || !utils.isArray(element)) {
         return element;
     }
 
-    if (typeof element[1] === 'object' && !Array.isArray(element[1])) {
+    if (utils.isObject(element[1]) && !utils.isArray(element[1])) {
         return deepTextSearch(element[2]);
     }
 
@@ -138,16 +130,16 @@ function reprocessTree(tree) {
         element = tree[i];
         length = element.length;
 
-        if (isNeedAlignCenter(element)) {
-            tree[i] = alignCenter(element);
+        if (isNeedAlignCenter(tree[i])) {
+            tree[i] = alignCenter(tree[i]);
         }
 
-        if (isHeading(element)) {
-            tree[i] = heading(element);
+        if (isHeading(tree[i])) {
+            tree[i] = heading(tree[i]);
         }
 
-        if (isLink(element)) {
-            tree[i] = link(element);
+        if (isLink(tree[i])) {
+            tree[i] = link(tree[i]);
         }
     }
 
