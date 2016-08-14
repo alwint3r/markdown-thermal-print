@@ -126,6 +126,61 @@ function deepTextSearch(element) {
     return deepTextSearch(element[1]);
 }
 
+function findDeepLink(element) {
+    var duplicate = element.concat([]);
+
+    function recursiveFind(current, depth) {
+        for (var i = 0 ; i < current.length; i++) {
+            if (utils.isArray(current[i])) {
+                depth.push(i);
+
+                if (current[i][0] === 'link') {
+                    return [depth, current[i][1].href];
+                } else if (current[i][0] === 'link_ref') {
+                    return [depth, current[i][1].ref];
+                } else {
+                    return recursiveFind(current[i], depth);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    var link = recursiveFind(duplicate, []);
+
+    if (link) {
+        var pointer;
+        for (var i = 0; i < link[0].length - 1; i++) {
+            pointer = duplicate[link[0][i]];
+        }
+
+        if (pointer[link[0][link[0].length - 1]][0].indexOf('link') >= 0) {
+            pointer[1] = pointer[1].replace(/\(.*\)/, link[1]);
+        }
+
+        var newPointer = [];
+
+        for (var i = 0; i < pointer.length; i++) {
+            if (utils.isArray(pointer[i])) {
+                if (pointer[i][0].indexOf('link') >= 0) {
+                    continue;
+                }
+            }
+
+            newPointer.push(pointer[i]);
+        }
+
+        for (var i = 0; i < pointer.length; i++) {
+            pointer[i] = newPointer[i];
+        }
+
+        pointer.length = newPointer.length;
+    }
+
+    return duplicate;
+}
+
 function reprocessTree(tree) {
     var element;
     var length;
@@ -146,7 +201,7 @@ function reprocessTree(tree) {
             tree[i] = link(tree[i]);
         }
 
-        // tree[i] = findDeepLink(tree[i]);
+        tree[i] = findDeepLink(tree[i]);
     }
 
     return tree;
