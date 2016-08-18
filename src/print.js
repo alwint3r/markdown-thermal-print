@@ -1,6 +1,13 @@
 'use strict';
 
 var md = require('./custom_markdown');
+var utils = require('./utils');
+var PRINTING_FUNCTION_MAP = {
+    strong: 'bold',
+    center: 'center',
+    left: 'left',
+    right: 'right',
+};
 
 function nop() {}
 
@@ -20,18 +27,53 @@ function print(thermalPrinter, rawMd, done) {
     }
 
     var tree = md(rawMd);
-    var i = 0;
-    var defaultFunction = thermalPrinter.printLine;
+    var defaultFunction = thermalPrinter.printText;
 
     if (tree[0] === 'markdown') {
         tree.shift();
     }
 
-    for (var i = 0; i < tree.length; i++) {
-        console.log(tree[i]);
+    var configs = [];
+
+    function iterateBranch(branch) {
+        var deactivated;
+        var currentFn;
+
+        for (var i = 0; i < branch.length; i++) {
+            if (utils.isArray(branch[i])) {
+                if (PRINTING_FUNCTION_MAP[branch[i][0]]) {
+                    currentFn = PRINTING_FUNCTION_MAP[branch[i][0]];
+
+                    if (utils.isFunction(thermalPrinter[currentFn])) {
+                        thermalPrinter[currentFn].call(thermalPrinter, true);
+                        configs.push(branch[i][0]);
+                    }
+                }
+
+                return iterateBranch(branch[i].slice(1));
+            } else {
+                defaultFunction(branch[i]);
+            }
+        }
+
+        while (configs.length > 0) {
+            deactivated = configs.pop();
+            if (deactivated)
+                thermalPrinter[deactivated].call(thermalPrinter, false);
+        }
+
+        thermalPrinter.lineFeed(1);
     }
 
-    return callback(null);
+    for (var i = 0; i < tree.length; i++) {
+        if (tree[i][0] !== 'para') {
+            continue;
+        }
+
+        iterateBranch(tree[i].slice(1));
+    }
+
+    return thermalPrinter.print(callback);
 }
 
 module.exports = print;

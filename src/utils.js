@@ -20,4 +20,8 @@ module.exports = {
     isObject: function isObject(source) {
         return typeof source === 'object';
     },
+
+    isFunction: function isFunction(source) {
+        return typeof source === 'function';
+    },
 };
