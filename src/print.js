@@ -7,6 +7,7 @@ var PRINTING_FUNCTION_MAP = {
     center: 'center',
     left: 'left',
     right: 'right',
+    big: 'big',
 };
 
 function nop() {}
@@ -27,15 +28,14 @@ function print(thermalPrinter, rawMd, done) {
     }
 
     var tree = md(rawMd);
-    var defaultFunction = thermalPrinter.printText;
+    var defaultFunction = thermalPrinter.printText.bind(thermalPrinter);
 
     if (tree[0] === 'markdown') {
         tree.shift();
     }
 
-    var configs = [];
-
     function iterateBranch(branch) {
+        var configs = [];
         var deactivated;
         var currentFn;
 
@@ -58,8 +58,12 @@ function print(thermalPrinter, rawMd, done) {
 
         while (configs.length > 0) {
             deactivated = configs.pop();
-            if (deactivated)
-                thermalPrinter[deactivated].call(thermalPrinter, false);
+            if (deactivated) {
+                if (['center', 'right'].indexOf(deactivated) >= 0)
+                    thermalPrinter.left.call(thermalPrinter);
+                else
+                    thermalPrinter[deactivated].call(thermalPrinter, false);
+            }
         }
 
         thermalPrinter.lineFeed(1);
@@ -72,6 +76,8 @@ function print(thermalPrinter, rawMd, done) {
 
         iterateBranch(tree[i].slice(1));
     }
+
+    thermalPrinter.left();
 
     return thermalPrinter.print(callback);
 }
